@@ -40,10 +40,10 @@ func NewListKeysContext(ctx context.Context, r *http.Request, service *goa.Servi
 type ListKeysPayload []string
 
 // OK sends a HTTP response with status code 200.
-func (ctx *ListKeysContext) OK(r KeysCollection) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.keys+json; type=collection")
+func (ctx *ListKeysContext) OK(r UserCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.user+json; type=collection")
 	if r == nil {
-		r = KeysCollection{}
+		r = UserCollection{}
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }

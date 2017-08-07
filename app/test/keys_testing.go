@@ -199,7 +199,7 @@ func ListKeysNotFound(t goatest.TInterface, ctx context.Context, service *goa.Se
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListKeysOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) (http.ResponseWriter, app.KeysCollection) {
+func ListKeysOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) (http.ResponseWriter, app.UserCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -247,12 +247,12 @@ func ListKeysOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 	if rw.Code != 200 {
 		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
 	}
-	var mt app.KeysCollection
+	var mt app.UserCollection
 	if resp != nil {
 		var ok bool
-		mt, ok = resp.(app.KeysCollection)
+		mt, ok = resp.(app.UserCollection)
 		if !ok {
-			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.KeysCollection", resp, resp)
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.UserCollection", resp, resp)
 		}
 		_err = mt.Validate()
 		if _err != nil {

@@ -10,6 +10,10 @@
 
 package app
 
+import (
+	"github.com/goadesign/goa"
+)
+
 // Type for a GitHub user's public SSH Key
 type userKey struct {
 	// The ID of the public SSH key on GitHub.
@@ -18,14 +22,25 @@ type userKey struct {
 	Key *string `form:"key,omitempty" json:"key,omitempty" xml:"key,omitempty"`
 }
 
+// Validate validates the userKey type instance.
+func (ut *userKey) Validate() (err error) {
+	if ut.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	if ut.Key == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "key"))
+	}
+	return
+}
+
 // Publicize creates UserKey from userKey
 func (ut *userKey) Publicize() *UserKey {
 	var pub UserKey
 	if ut.ID != nil {
-		pub.ID = ut.ID
+		pub.ID = *ut.ID
 	}
 	if ut.Key != nil {
-		pub.Key = ut.Key
+		pub.Key = *ut.Key
 	}
 	return &pub
 }
@@ -33,7 +48,16 @@ func (ut *userKey) Publicize() *UserKey {
 // Type for a GitHub user's public SSH Key
 type UserKey struct {
 	// The ID of the public SSH key on GitHub.
-	ID *int `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	ID int `form:"id" json:"id" xml:"id"`
 	// The public SSH key
-	Key *string `form:"key,omitempty" json:"key,omitempty" xml:"key,omitempty"`
+	Key string `form:"key" json:"key" xml:"key"`
+}
+
+// Validate validates the UserKey type instance.
+func (ut *UserKey) Validate() (err error) {
+
+	if ut.Key == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "key"))
+	}
+	return
 }

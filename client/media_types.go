@@ -17,39 +17,46 @@ import (
 
 // Response Type for a GitHub User's list of public SSH Keys (default view)
 //
-// Identifier: application/vnd.keys+json; view=default
-type Keys struct {
+// Identifier: application/vnd.user+json; view=default
+type User struct {
 	// The list of the Github user's public SSH keys.
 	Keys []*UserKey `form:"keys" json:"keys" xml:"keys"`
 	// The username of the GitHub user.
 	Username string `form:"username" json:"username" xml:"username"`
 }
 
-// Validate validates the Keys media type instance.
-func (mt *Keys) Validate() (err error) {
+// Validate validates the User media type instance.
+func (mt *User) Validate() (err error) {
 	if mt.Username == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "username"))
 	}
 	if mt.Keys == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "keys"))
 	}
+	for _, e := range mt.Keys {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
 	return
 }
 
-// DecodeKeys decodes the Keys instance encoded in resp body.
-func (c *Client) DecodeKeys(resp *http.Response) (*Keys, error) {
-	var decoded Keys
+// DecodeUser decodes the User instance encoded in resp body.
+func (c *Client) DecodeUser(resp *http.Response) (*User, error) {
+	var decoded User
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return &decoded, err
 }
 
-// KeysCollection is the media type for an array of Keys (default view)
+// UserCollection is the media type for an array of User (default view)
 //
-// Identifier: application/vnd.keys+json; type=collection; view=default
-type KeysCollection []*Keys
+// Identifier: application/vnd.user+json; type=collection; view=default
+type UserCollection []*User
 
-// Validate validates the KeysCollection media type instance.
-func (mt KeysCollection) Validate() (err error) {
+// Validate validates the UserCollection media type instance.
+func (mt UserCollection) Validate() (err error) {
 	for _, e := range mt {
 		if e != nil {
 			if err2 := e.Validate(); err2 != nil {
@@ -60,9 +67,9 @@ func (mt KeysCollection) Validate() (err error) {
 	return
 }
 
-// DecodeKeysCollection decodes the KeysCollection instance encoded in resp body.
-func (c *Client) DecodeKeysCollection(resp *http.Response) (KeysCollection, error) {
-	var decoded KeysCollection
+// DecodeUserCollection decodes the UserCollection instance encoded in resp body.
+func (c *Client) DecodeUserCollection(resp *http.Response) (UserCollection, error) {
+	var decoded UserCollection
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return decoded, err
 }

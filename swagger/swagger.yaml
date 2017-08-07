@@ -1,7 +1,15 @@
 consumes:
 - application/json
 definitions:
-  Keys:
+  ListKeysPayload:
+    example:
+    - Explicabo quis quisquam ut consequatur.
+    items:
+      example: Explicabo quis quisquam ut consequatur.
+      type: string
+    title: ListKeysPayload
+    type: array
+  User:
     description: Response Type for a GitHub User's list of public SSH Keys (default
       view)
     example:
@@ -29,10 +37,10 @@ definitions:
     required:
     - username
     - keys
-    title: 'Mediatype identifier: application/vnd.keys+json; view=default'
+    title: 'Mediatype identifier: application/vnd.user+json; view=default'
     type: object
-  KeysCollection:
-    description: KeysCollection is the media type for an array of Keys (default view)
+  UserCollection:
+    description: UserCollection is the media type for an array of User (default view)
     example:
     - keys:
       - id: 1.234568e+09
@@ -47,16 +55,8 @@ definitions:
         key: ssh-rsa ABC123 ...
       username: myname
     items:
-      $ref: '#/definitions/Keys'
-    title: 'Mediatype identifier: application/vnd.keys+json; type=collection; view=default'
-    type: array
-  ListKeysPayload:
-    example:
-    - Explicabo quis quisquam ut consequatur.
-    items:
-      example: Explicabo quis quisquam ut consequatur.
-      type: string
-    title: ListKeysPayload
+      $ref: '#/definitions/User'
+    title: 'Mediatype identifier: application/vnd.user+json; type=collection; view=default'
     type: array
   UserKey:
     description: Type for a GitHub user's public SSH Key
@@ -73,6 +73,9 @@ definitions:
         description: The public SSH key
         example: ssh-rsa ABC123 ...
         type: string
+    required:
+    - id
+    - key
     title: UserKey
     type: object
 info:
@@ -93,12 +96,12 @@ paths:
         schema:
           $ref: '#/definitions/ListKeysPayload'
       produces:
-      - application/vnd.keys+json; type=collection
+      - application/vnd.user+json; type=collection
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/KeysCollection'
+            $ref: '#/definitions/UserCollection'
         "400":
           description: Bad Request
         "401":
