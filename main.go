@@ -3,10 +3,16 @@
 package main
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/JKhawaja/replicated/app"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 )
+
+// GitHubClient is a type-alias for the standard http client ...
+type GitHubClient http.Client
 
 func main() {
 	// Create service
@@ -18,8 +24,15 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
+	// GitHub Client
+	tr := &http.Transport{
+		MaxIdleConns:    10,
+		IdleConnTimeout: 10 * time.Second,
+	}
+	ghc := &http.Client{Transport: tr}
+
 	// Mount "keys" controller
-	c := NewKeysController(service)
+	c := NewKeysController(service, ghc)
 	app.MountKeysController(service, c)
 
 	// Start service
