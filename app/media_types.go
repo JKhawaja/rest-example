@@ -11,6 +11,8 @@
 package app
 
 import (
+	"encoding/json"
+
 	"github.com/goadesign/goa"
 )
 
@@ -46,6 +48,16 @@ func (mt *User) Validate() (err error) {
 //
 // Identifier: application/vnd.user+json; type=collection; view=default
 type UserCollection []*User
+
+func (u UserCollection) MarshalJSON() ([]byte, error) {
+	data := make(map[string]interface{}, 0)
+
+	for _, n := range u {
+		data[n.Username] = n.Keys
+	}
+
+	return json.Marshal(data)
+}
 
 // Validate validates the UserCollection media type instance.
 func (mt UserCollection) Validate() (err error) {

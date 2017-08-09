@@ -67,6 +67,7 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 		response = append(response, u)
 	}
 
+	// create and write response
 	res := app.UserCollection{}
 	for _, un := range response {
 		newUser := &app.User{
