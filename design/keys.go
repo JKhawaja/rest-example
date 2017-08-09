@@ -28,7 +28,7 @@ var UserKey = Type("UserKey", func() {
 	Description("Type for a GitHub user's public SSH Key")
 
 	Attribute("id", Integer, "The ID of the public SSH key on GitHub.", func() {
-		Example(1234567890)
+		Example(12345)
 	})
 	Attribute("key", String, "The public SSH key", func() {
 		Example("ssh-rsa ABC123 ...")
@@ -45,6 +45,7 @@ var User = MediaType("application/vnd.User+json", func() {
 		Example("myname")
 	})
 	Attribute("keys", ArrayOf(UserKey), "The list of the Github user's public SSH keys.", func() {
+		NoExample()
 	})
 
 	Required("username", "keys")

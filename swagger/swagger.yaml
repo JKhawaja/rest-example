@@ -3,9 +3,10 @@ consumes:
 definitions:
   ListKeysPayload:
     example:
-    - Explicabo quis quisquam ut consequatur.
+    - Omnis explicabo quis.
+    - Omnis explicabo quis.
     items:
-      example: Explicabo quis quisquam ut consequatur.
+      example: Omnis explicabo quis.
       type: string
     title: ListKeysPayload
     type: array
@@ -13,20 +14,12 @@ definitions:
     description: Response Type for a GitHub User's list of public SSH Keys (default
       view)
     example:
-      keys:
-      - id: 1.234568e+09
-        key: ssh-rsa ABC123 ...
-      - id: 1.234568e+09
-        key: ssh-rsa ABC123 ...
+      keys: '-'
       username: myname
     properties:
       keys:
         description: The list of the Github user's public SSH keys.
-        example:
-        - id: 1.234568e+09
-          key: ssh-rsa ABC123 ...
-        - id: 1.234568e+09
-          key: ssh-rsa ABC123 ...
+        example: '-'
         items:
           $ref: '#/definitions/UserKey'
         type: array
@@ -42,17 +35,7 @@ definitions:
   UserCollection:
     description: UserCollection is the media type for an array of User (default view)
     example:
-    - keys:
-      - id: 1.234568e+09
-        key: ssh-rsa ABC123 ...
-      - id: 1.234568e+09
-        key: ssh-rsa ABC123 ...
-      username: myname
-    - keys:
-      - id: 1.234568e+09
-        key: ssh-rsa ABC123 ...
-      - id: 1.234568e+09
-        key: ssh-rsa ABC123 ...
+    - keys: '-'
       username: myname
     items:
       $ref: '#/definitions/User'
@@ -61,12 +44,12 @@ definitions:
   UserKey:
     description: Type for a GitHub user's public SSH Key
     example:
-      id: 1.234568e+09
+      id: 12345
       key: ssh-rsa ABC123 ...
     properties:
       id:
         description: The ID of the public SSH key on GitHub.
-        example: 1.234568e+09
+        example: 12345
         format: int64
         type: integer
       key:
