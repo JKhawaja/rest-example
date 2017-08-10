@@ -16,9 +16,6 @@ import (
 	"github.com/goadesign/goa/middleware"
 )
 
-// GitHubClient is a type-alias for the standard http client ...
-type GitHubClient http.Client
-
 func main() {
 	// Create service
 	service := goa.New("GitHub SSH Keys")
