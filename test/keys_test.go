@@ -9,6 +9,7 @@ import (
 )
 
 // TestListKeys is a basic unit test example using the generated goa client code
+// NOTE: can also make use of the generated `test` package (located inside the app directory)
 func TestListKeys(t *testing.T) {
 
 	tests := [][]string{
