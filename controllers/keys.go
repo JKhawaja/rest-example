@@ -9,6 +9,7 @@ import (
 	"github.com/JKhawaja/replicated/app"
 
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/logging/logrus"
 )
 
 // KeysController implements the keys resource.
@@ -53,7 +54,8 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 	for _, name := range names {
 		keys, err := getGitHubKeys(name, c.Client)
 		if err != nil {
-			return ctx.BadRequest(err)
+			goalogrus.Entry(ctx).Errorf("GitHub API Access error: %+v", err)
+			return ctx.InternalServerError()
 		}
 
 		newKeys := convertList(keys)

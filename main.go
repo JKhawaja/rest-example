@@ -13,12 +13,18 @@ import (
 	. "github.com/JKhawaja/replicated/controllers"
 
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/logging/logrus"
 	"github.com/goadesign/goa/middleware"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	// Create service
 	service := goa.New("GitHub SSH Keys")
+
+	// Initialize logger handler using logrus package
+	logger := logrus.New()
+	service.WithLogger(goalogrus.New(logger))
 
 	// Mount middleware
 	service.Use(middleware.RequestID())
