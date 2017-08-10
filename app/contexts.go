@@ -67,7 +67,7 @@ func (ctx *ListKeysContext) NotFound(r error) error {
 }
 
 // InternalServerError sends a HTTP response with status code 500.
-func (ctx *ListKeysContext) InternalServerError(r error) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
-	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+func (ctx *ListKeysContext) InternalServerError() error {
+	ctx.ResponseData.WriteHeader(500)
+	return nil
 }
