@@ -43,8 +43,7 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 
 	// check that username has been provided (unecessary as already checked by goa)
 	if len(ctx.Payload) < 1 {
-		ctx.Write([]byte("Please provide a username."))
-		return ctx.BadRequest()
+		return ctx.BadRequest(fmt.Errorf("Please provide a username."))
 	}
 
 	// remove any duplicate names in request
@@ -54,8 +53,7 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 	for _, name := range names {
 		keys, err := getGitHubKeys(name, c.Client)
 		if err != nil {
-			ctx.Write([]byte(err.Error()))
-			return ctx.BadRequest()
+			return ctx.BadRequest(err)
 		}
 
 		newKeys := convertList(keys)
