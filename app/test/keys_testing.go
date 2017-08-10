@@ -25,10 +25,10 @@ import (
 )
 
 // ListKeysBadRequest runs the method List of the given controller with the given parameters and payload.
-// It returns the response writer so it's possible to inspect the response headers.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListKeysBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) http.ResponseWriter {
+func ListKeysBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -76,16 +76,24 @@ func ListKeysBadRequest(t goatest.TInterface, ctx context.Context, service *goa.
 	if rw.Code != 400 {
 		t.Errorf("invalid response status code: got %+v, expected 400", rw.Code)
 	}
+	var mt error
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(error)
+		if !ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of error", resp, resp)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
 }
 
 // ListKeysInternalServerError runs the method List of the given controller with the given parameters and payload.
-// It returns the response writer so it's possible to inspect the response headers.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListKeysInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) http.ResponseWriter {
+func ListKeysInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -133,16 +141,24 @@ func ListKeysInternalServerError(t goatest.TInterface, ctx context.Context, serv
 	if rw.Code != 500 {
 		t.Errorf("invalid response status code: got %+v, expected 500", rw.Code)
 	}
+	var mt error
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(error)
+		if !ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of error", resp, resp)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
 }
 
 // ListKeysNotFound runs the method List of the given controller with the given parameters and payload.
-// It returns the response writer so it's possible to inspect the response headers.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListKeysNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) http.ResponseWriter {
+func ListKeysNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -190,9 +206,17 @@ func ListKeysNotFound(t goatest.TInterface, ctx context.Context, service *goa.Se
 	if rw.Code != 404 {
 		t.Errorf("invalid response status code: got %+v, expected 404", rw.Code)
 	}
+	var mt error
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(error)
+		if !ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of error", resp, resp)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
 }
 
 // ListKeysOK runs the method List of the given controller with the given parameters and payload.
@@ -265,10 +289,10 @@ func ListKeysOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 }
 
 // ListKeysUnauthorized runs the method List of the given controller with the given parameters and payload.
-// It returns the response writer so it's possible to inspect the response headers.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListKeysUnauthorized(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) http.ResponseWriter {
+func ListKeysUnauthorized(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.KeysController, payload app.ListKeysPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -316,7 +340,15 @@ func ListKeysUnauthorized(t goatest.TInterface, ctx context.Context, service *go
 	if rw.Code != 401 {
 		t.Errorf("invalid response status code: got %+v, expected 401", rw.Code)
 	}
+	var mt error
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(error)
+		if !ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of error", resp, resp)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
 }

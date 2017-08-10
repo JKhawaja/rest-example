@@ -49,25 +49,25 @@ func (ctx *ListKeysContext) OK(r UserCollection) error {
 }
 
 // BadRequest sends a HTTP response with status code 400.
-func (ctx *ListKeysContext) BadRequest() error {
-	ctx.ResponseData.WriteHeader(400)
-	return nil
+func (ctx *ListKeysContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
 // Unauthorized sends a HTTP response with status code 401.
-func (ctx *ListKeysContext) Unauthorized() error {
-	ctx.ResponseData.WriteHeader(401)
-	return nil
+func (ctx *ListKeysContext) Unauthorized(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 401, r)
 }
 
 // NotFound sends a HTTP response with status code 404.
-func (ctx *ListKeysContext) NotFound() error {
-	ctx.ResponseData.WriteHeader(404)
-	return nil
+func (ctx *ListKeysContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
 // InternalServerError sends a HTTP response with status code 500.
-func (ctx *ListKeysContext) InternalServerError() error {
-	ctx.ResponseData.WriteHeader(500)
-	return nil
+func (ctx *ListKeysContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }

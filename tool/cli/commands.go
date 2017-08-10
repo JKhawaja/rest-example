@@ -51,7 +51,8 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 [
-   "Explicabo quis quisquam ut consequatur."
+   "Omnis explicabo quis.",
+   "Omnis explicabo quis."
 ]`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}

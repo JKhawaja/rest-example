@@ -25,10 +25,10 @@ type userKey struct {
 // Validate validates the userKey type instance.
 func (ut *userKey) Validate() (err error) {
 	if ut.ID == nil {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "id"))
 	}
 	if ut.Key == nil {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "key"))
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "key"))
 	}
 	return
 }
@@ -57,7 +57,7 @@ type UserKey struct {
 func (ut *UserKey) Validate() (err error) {
 
 	if ut.Key == "" {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "key"))
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "key"))
 	}
 	return
 }
