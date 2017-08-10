@@ -8,8 +8,8 @@ import (
 	"github.com/JKhawaja/replicated/client"
 )
 
-// TestKeysListener is a basic unit test example using the generated goa client code
-func TestKeysLister(t *testing.T) {
+// TestListKeys is a basic unit test example using the generated goa client code
+func TestListKeys(t *testing.T) {
 
 	tests := [][]string{
 		{"tom", "dave"},
