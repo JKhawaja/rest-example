@@ -8,10 +8,10 @@ import (
 var _ = Resource("keys", func() {
 
 	BasePath("/keys")
-	Response(BadRequest)          // 400
-	Response(Unauthorized)        // 401
-	Response(NotFound)            // 404
-	Response(InternalServerError) // 500
+	Response(BadRequest, ErrorMedia)          // 400
+	Response(Unauthorized, ErrorMedia)        // 401
+	Response(NotFound, ErrorMedia)            // 404
+	Response(InternalServerError, ErrorMedia) // 500
 
 	Action("list", func() {
 		Description("Given a list of GitHub usernames, responds with list of public SSH keys for each User (associated to their GitHub account).")
