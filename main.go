@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/JKhawaja/replicated/app"
+	. "github.com/JKhawaja/replicated/controllers"
+
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
-
-	. "github.com/JKhawaja/replicated/controllers"
 )
 
 // GitHubClient is a type-alias for the standard http client ...

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/JKhawaja/replicated/app"
+
 	"github.com/goadesign/goa"
 )
 
