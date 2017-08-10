@@ -11,6 +11,10 @@ Swagger documentation is also available in the `swagger` directory.
 
 ## Build
 
-Assuming a working Go Environment ....
+Assuming a working Go Environment .... `go build .`
 
-All dependencies have been vendored and committed to the public repo. This means that it should build with a simple `go build .`
+Can vendor dependencies using the `dep` tool. 
+
+Get `dep`: `$ go get -u github.com/golang/dep/cmd/dep`
+
+Run: `dep ensure` inside this repository (this will build a vendor directory based off the dependency manifest files adhering to any constraints).
