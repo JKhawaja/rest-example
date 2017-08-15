@@ -3,14 +3,13 @@
 package main
 
 import (
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/JKhawaja/replicated/app"
 	. "github.com/JKhawaja/replicated/controllers"
+	"github.com/JKhawaja/replicated/services/github"
 
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/logging/logrus"
@@ -33,11 +32,7 @@ func main() {
 	service.Use(middleware.Recover())
 
 	// GitHub Client
-	tr := &http.Transport{
-		MaxIdleConns:    10,
-		IdleConnTimeout: 10 * time.Second,
-	}
-	ghc := &http.Client{Transport: tr}
+	ghc := github.NewGHC()
 
 	// Mount "keys" controller
 	c := NewKeysController(service, ghc)
@@ -45,7 +40,7 @@ func main() {
 
 	// Create Shutdown Channels
 	errChan := make(chan error, 10)
-	signalChan := make(chan os.Signal, 1)
+	signalChan := make(chan os.Signal, 2)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
 	// Start Server
@@ -53,7 +48,7 @@ func main() {
 		errChan <- service.ListenAndServe(":8080")
 	}()
 
-	// Blocking Clean Shutdown
+	// Blocking Clean Shutdown (will not work on Windows)
 	for {
 		select {
 		case err := <-errChan:
@@ -62,8 +57,9 @@ func main() {
 				os.Exit(1)
 			}
 		case s := <-signalChan:
-			service.LogError("Crash: %s", s.String())
+			service.LogInfo("Terminate: %s", s.String())
 			os.Exit(0)
 		}
 	}
+
 }
