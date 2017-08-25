@@ -17,3 +17,9 @@
 # TODO files
 
 *.todo
+
+# Vendor Files
+.vendor/
+
+# Test JSON files
+*test.json*
