@@ -2,10 +2,16 @@
 
 
 [[projects]]
+  name = "github.com/Sirupsen/logrus"
+  packages = ["."]
+  revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
+  version = "v1.0.3"
+
+[[projects]]
   branch = "master"
   name = "github.com/armon/go-metrics"
   packages = ["."]
-  revision = "ded85ed431a7aee3f3af79f082b704d948058f64"
+  revision = "023a4bbe4bb9bfb23ee7e1afc8d0abad217641f3"
 
 [[projects]]
   branch = "master"
@@ -21,7 +27,7 @@
 
 [[projects]]
   name = "github.com/goadesign/goa"
-  packages = [".","client","design","design/apidsl","dslengine","encoding/json","goatest","middleware","uuid"]
+  packages = [".","client","design","design/apidsl","dslengine","encoding/json","goatest","logging/logrus","middleware","uuid"]
   revision = "58f3177f36f2c50ee6119da92795e48bac6d6243"
   version = "v1.2.0"
 
@@ -38,12 +44,6 @@
   revision = "0a025b7e63adc15a622f29b0b2c4c3848243bbf6"
 
 [[projects]]
-  name = "github.com/inconshreveable/mousetrap"
-  packages = ["."]
-  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
-  version = "v1.0"
-
-[[projects]]
   branch = "master"
   name = "github.com/manveru/faker"
   packages = ["."]
@@ -54,18 +54,6 @@
   packages = ["."]
   revision = "879c5887cd475cd7864858769793b2ceb0d44feb"
   version = "v1.1.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/spf13/cobra"
-  packages = ["."]
-  revision = "b26b538f693051ac6518e65672de3144ce3fbedc"
-
-[[projects]]
-  name = "github.com/spf13/pflag"
-  packages = ["."]
-  revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
-  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -81,13 +69,25 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "b176d7def5d71bdd214203491f89843ed217f420"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = ["websocket"]
-  revision = "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f"
+  revision = "1c05540f6879653db88113bc4a2b70aec4bd491f"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix","windows"]
+  revision = "9f7170bcd8e9f4d3691c06401119c46a769a1e03"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "47efff48333bb2522a520c719d19f3b5ad7fe4f28fc5f91a3ddf3263ed31c16f"
+  inputs-digest = "5f31892111a8e1de9411b883f7b2813662b79e432540e62e704eb5be35730c22"
   solver-name = "gps-cdcl"
   solver-version = 1

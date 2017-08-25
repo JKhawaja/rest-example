@@ -3,9 +3,9 @@
 package main
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
+	"log"
+	"net/http"
+	"time"
 
 	"github.com/JKhawaja/replicated/app"
 	. "github.com/JKhawaja/replicated/controllers"
@@ -15,6 +15,7 @@ import (
 	"github.com/goadesign/goa/logging/logrus"
 	"github.com/goadesign/goa/middleware"
 	"github.com/sirupsen/logrus"
+	"github.com/tylerb/graceful"
 )
 
 func main() {
@@ -38,28 +39,12 @@ func main() {
 	c := NewKeysController(service, ghc)
 	app.MountKeysController(service, c)
 
-	// Create Shutdown Channels
-	errChan := make(chan error, 10)
-	signalChan := make(chan os.Signal, 2)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-
-	// Start Server
-	go func() {
-		errChan <- service.ListenAndServe(":8080")
-	}()
-
-	// Blocking Clean Shutdown (will not work on Windows)
-	for {
-		select {
-		case err := <-errChan:
-			if err != nil {
-				service.LogError("startup", "err", err)
-				os.Exit(1)
-			}
-		case s := <-signalChan:
-			service.LogInfo("Terminate: %s", s.String())
-			os.Exit(0)
-		}
+	// Setup graceful server
+	server := &graceful.Server{
+		Timeout: time.Duration(15) * time.Second,
+		Server:  &http.Server{Addr: ":8080", Handler: service.Mux},
 	}
 
+	// Start Server
+	log.Fatal(server.ListenAndServe())
 }
