@@ -1,6 +1,11 @@
 package util
 
 import (
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path/filepath"
+
 	"github.com/JKhawaja/replicated/app"
 	"github.com/JKhawaja/replicated/services/github"
 )
@@ -36,4 +41,37 @@ func ConvertList(list []github.Key) []*app.UserKey {
 	}
 
 	return newList
+}
+
+// BuildBinary ...
+func BuildBinary(name string) (string, error) {
+	// directory
+	tmpDir, err := ioutil.TempDir("", "")
+	if err != nil {
+		return "", err
+	}
+
+	// command
+	binName := filepath.Join(tmpDir, name)
+	staticLink := `'-extldflags "-static"'`
+	command := []string{
+		"go", "build", "-o", binName, "-a", "--ldflags", staticLink, ".",
+	}
+	cmd := exec.Command(command[0], command[1:]...)
+
+	// envVar
+	gopath := os.Getenv("GOPATH")
+	cmd.Env = []string{
+		"GOOS=linux",
+		"GOARCH=amd64",
+		"GOPATH=" + gopath,
+	}
+
+	// execute
+	data, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(data), err
+	}
+
+	return binName, nil
 }
