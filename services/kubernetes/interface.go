@@ -8,6 +8,6 @@ type Configuration struct {
 
 // Client ...
 type Client interface {
-	CreateReplicaset(Configuration)
-	DeleteReplicaset(Configuration)
+	CreateDeployment(DeploymentConfig) error
+	// DeleteDeployment() error
 }
