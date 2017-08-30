@@ -34,7 +34,6 @@ func main() {
 		}
 
 		// TODO: specify your S3 bucket
-		// TODO: add aws keys and s3 bucket is 'kubernetes-test-1234'
 		s3Bucket := ""
 
 		client := s3.NewS3Client()
@@ -45,8 +44,7 @@ func main() {
 		}
 
 		// TODO: specify where your KubeConfig file is
-		// $HOME/.kube/config check with `cat config` -- set up for minikube
-		kubeConfigPath := "$HOME/.kube/config"
+		kubeConfigPath := ""
 
 		k8, err := kubernetes.NewKubernetesClient(kubeConfigPath)
 		if err != nil {
