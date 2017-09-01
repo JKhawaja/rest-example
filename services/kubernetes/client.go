@@ -42,14 +42,14 @@ type DeploymentConfig struct {
 	Labels      map[string]string
 }
 
-// K8Client ...
-type K8Client struct {
+// RealClient ...
+type RealClient struct {
 	ClientSet *kubernetes.Clientset
 }
 
 // NewKubernetesClient ...
 func NewKubernetesClient(path string) (Client, error) {
-	emptyClient := &K8Client{}
+	emptyClient := &RealClient{}
 
 	config, err := clientcmd.BuildConfigFromFlags("", path)
 	if err != nil {
@@ -62,13 +62,13 @@ func NewKubernetesClient(path string) (Client, error) {
 		return emptyClient, err
 	}
 
-	return &K8Client{
+	return &RealClient{
 		ClientSet: clientset,
 	}, nil
 }
 
 // CreateDeployment ...
-func (c *K8Client) CreateDeployment(config DeploymentConfig) error {
+func (c *RealClient) CreateDeployment(config DeploymentConfig) error {
 	// create deployment client
 	deployClient := c.ClientSet.AppsV1beta1().Deployments(apiv1.NamespaceDefault)
 
@@ -119,7 +119,7 @@ func (c *K8Client) CreateDeployment(config DeploymentConfig) error {
 		// First container: downloads binary to Volume
 		{
 			Name:            "download",
-			Image:           "gliderlabs/alpine",
+			Image:           "jeremyk/alpine",
 			ImagePullPolicy: "Always",
 			Command:         []string{"wget", "-O", binPath, config.BURL},
 			VolumeMounts: []apiv1.VolumeMount{

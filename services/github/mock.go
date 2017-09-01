@@ -4,16 +4,16 @@ import (
 	"fmt"
 )
 
-// MockGHC ...
-type MockGHC struct{}
+// MockClient ...
+type MockClient struct{}
 
 // NewMockGHC ...
 func NewMockGHC() Client {
-	return &MockGHC{}
+	return &MockClient{}
 }
 
 // ListKeys ...
-func (g *MockGHC) ListKeys(username string) ([]Key, error) {
+func (g *MockClient) ListKeys(username string) ([]Key, error) {
 	fmt.Println(username)
 	response := []Key{}
 	return response, nil

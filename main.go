@@ -30,35 +30,38 @@ func main() {
 		log.Println("Building binary ...")
 		path, err := BuildBinary("rest-example")
 		if err != nil {
-			log.Fatalf("Could not build Go binary: %s", err.Error())
+			log.Fatalf("Could not build Go binary: %+v with value: %s", err, path)
 		}
 
-		// TODO: specify your S3 bucket
-		s3Bucket := ""
-
-		client := s3.NewS3Client()
-		log.Println("Uploading binary ...")
-		url, err := client.Upload(s3Bucket, path)
+		// AWS S3 bucket and region
+		bucket := os.Getenv("AWS_BUCKET")
+		region := os.Getenv("AWS_REGION")
+		client, err := s3.NewS3Client(region)
 		if err != nil {
-			log.Fatalf("Could not upload binary to S3: %s", err.Error())
+			log.Fatalf("Could not create an AWS S3 Client: %+v", err)
 		}
 
-		// TODO: specify where your KubeConfig file is
-		kubeConfigPath := ""
+		log.Println("Uploading binary ...")
+		url, err := client.Upload(bucket, path)
+		if err != nil {
+			log.Fatalf("Could not upload binary to S3: %+v", err)
+		}
+		log.Printf("Binary uploaded to: %s", url)
+
+		// kubeconfig path
+		kubeConfigPath := os.Getenv("KUBE_CONFIG")
 
 		k8, err := kubernetes.NewKubernetesClient(kubeConfigPath)
 		if err != nil {
-			log.Fatalf("Could not create a Kubernetes Client: %s", err.Error())
-		}
-
-		config := kubernetes.DeploymentConfig{
-			BURL: url,
-			Name: "rest-example",
+			log.Fatalf("Could not create a Kubernetes Client: %+v", err)
 		}
 
 		log.Println("Deploying binary ...")
-		if err = k8.CreateDeployment(config); err != nil {
-			log.Fatalf("Could not create Kubernetes Deployment: %s", err.Error())
+		if err = k8.CreateDeployment(kubernetes.DeploymentConfig{
+			BURL: url,
+			Name: "rest-example",
+		}); err != nil {
+			log.Fatalf("Could not create Kubernetes Deployment: %+v", err)
 		}
 
 		log.Printf("Binary %s successfully deployed to Kubernetes. Please verify with kubectl.", path)

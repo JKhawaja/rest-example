@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// GHC ...
-type GHC struct {
+// RealClient ...
+type RealClient struct {
 	Client *http.Client
 }
 
@@ -20,13 +20,13 @@ func NewGHC() Client {
 		IdleConnTimeout: 10 * time.Second,
 	}
 
-	return &GHC{
+	return &RealClient{
 		Client: &http.Client{Transport: tr},
 	}
 }
 
 // ListKeys ...
-func (g *GHC) ListKeys(username string) ([]Key, error) {
+func (g *RealClient) ListKeys(username string) ([]Key, error) {
 	emptyResp := []Key{}
 
 	url := fmt.Sprintf("http://api.github.com/users/%s/keys", username)

@@ -4,36 +4,46 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-// S3Client ...
-type S3Client struct {
+// RealClient ...
+type RealClient struct {
 	Uploader *s3manager.Uploader
 }
 
 // NewS3Client ...
-func NewS3Client() Client {
-	// Create a Session with a custom region
-	sess := session.Must(session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1"),
-	}))
+func NewS3Client(region string) (Client, error) {
+	var emptyClient RealClient
+	creds := credentials.NewEnvCredentials()
 
+	_, err := creds.Get()
+	if err != nil {
+		return &emptyClient, err
+	}
+
+	endpoint := "s3.amazonaws.com"
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region:      &region,
+		Endpoint:    &endpoint,
+		Credentials: creds,
+	}))
 	client := s3.New(sess)
 
 	uploader := s3manager.NewUploaderWithClient(client, func(u *s3manager.Uploader) {
-		u.PartSize = 10 * 1024 * 1024 // 10MB per part
+		u.PartSize = 64 * 1024 * 1024 // 64MB per part
 	})
 
-	return &S3Client{
+	return &RealClient{
 		Uploader: uploader,
-	}
+	}, nil
 }
 
 // Upload ...
-func (s *S3Client) Upload(bucket string, path string) (string, error) {
+func (s *RealClient) Upload(bucket string, path string) (string, error) {
 	// Open file
 	f, err := os.Open(path)
 	if err != nil {
@@ -42,11 +52,14 @@ func (s *S3Client) Upload(bucket string, path string) (string, error) {
 
 	key := f.Name()
 
+	// allow binary to be downloadable publicly
+	acl := "public-read"
 	// upload parameters
 	params := &s3manager.UploadInput{
 		Bucket: &bucket,
 		Key:    &key,
 		Body:   f,
+		ACL:    &acl,
 	}
 
 	// Upload file
