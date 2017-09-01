@@ -1,4 +1,4 @@
-//go:generate goagen bootstrap -d github.com/JKhawaja/replicated/design
+//go:generate goagen bootstrap -d github.com/JKhawaja/rest-example/design
 
 package main
 
@@ -9,12 +9,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/JKhawaja/replicated/app"
-	. "github.com/JKhawaja/replicated/controllers"
-	"github.com/JKhawaja/replicated/services/github"
-	"github.com/JKhawaja/replicated/services/kubernetes"
-	"github.com/JKhawaja/replicated/services/s3"
-	. "github.com/JKhawaja/replicated/util"
+	"github.com/JKhawaja/rest-example/app"
+	. "github.com/JKhawaja/rest-example/controllers"
+	"github.com/JKhawaja/rest-example/services/github"
+	"github.com/JKhawaja/rest-example/services/kubernetes"
+	"github.com/JKhawaja/rest-example/services/s3"
+	. "github.com/JKhawaja/rest-example/util"
 
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/logging/logrus"

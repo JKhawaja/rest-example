@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=github.com/JKhawaja/replicated/design
-// --out=$(GOPATH)\src\github.com\JKhawaja\replicated
+// --design=github.com/JKhawaja/rest-example/design
+// --out=$(GOPATH)\src\github.com\JKhawaja\rest-example
 // --version=v1.2.0-dirty
 
 package app

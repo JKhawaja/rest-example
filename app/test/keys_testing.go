@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=github.com/JKhawaja/replicated/design
-// --out=$(GOPATH)\src\github.com\JKhawaja\replicated
+// --design=github.com/JKhawaja/rest-example/design
+// --out=$(GOPATH)\src\github.com\JKhawaja\rest-example
 // --version=v1.2.0-dirty
 
 package test
@@ -14,7 +14,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/JKhawaja/replicated/app"
+	"github.com/JKhawaja/rest-example/app"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/goatest"
 	"io"

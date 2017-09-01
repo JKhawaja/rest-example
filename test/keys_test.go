@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/JKhawaja/replicated/client"
+	"github.com/JKhawaja/rest-example/client"
 )
 
 // TestListKeys is a basic unit test example using the generated goa client code

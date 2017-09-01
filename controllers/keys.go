@@ -3,9 +3,9 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/JKhawaja/replicated/app"
-	"github.com/JKhawaja/replicated/services/github"
-	. "github.com/JKhawaja/replicated/util"
+	"github.com/JKhawaja/rest-example/app"
+	"github.com/JKhawaja/rest-example/services/github"
+	. "github.com/JKhawaja/rest-example/util"
 
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/logging/logrus"
