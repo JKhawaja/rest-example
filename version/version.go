@@ -1,4 +1,4 @@
 package version
 
-// Version is the Semantic Version of our API
-var Version = "undefined"
+// Version is the SemVer formatted current version of the service ...
+var Version = "0.0.0"
