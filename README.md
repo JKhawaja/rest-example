@@ -11,7 +11,7 @@ Swagger documentation is also available in the `swagger` directory.
 
 ## Build
 
-Assuming a working Go Environment .... Inside repo's top directory: `go get ./...` + `go build .`
+Assuming a working Go Environment .... Inside repo's top directory: `make repo`
 
 Can vendor dependencies using the `dep` tool. 
 

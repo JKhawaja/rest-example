@@ -1,5 +1,10 @@
 default: vet build unit integration
 
+repo: get build
+
+get: 
+	go get ./...	
+
 build:
 	go install -v ./...
 
