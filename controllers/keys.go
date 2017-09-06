@@ -24,10 +24,10 @@ type User struct {
 }
 
 // NewKeysController creates a keys controller.
-func NewKeysController(service *goa.Service, client github.Client) *KeysController {
+func NewKeysController(service *goa.Service) *KeysController {
 	return &KeysController{
 		Controller: service.NewController("KeysController"),
-		Client:     client,
+		Client:     github.NewClient(),
 	}
 }
 

@@ -18,8 +18,8 @@ type RealClient struct {
 	status         bool
 }
 
-// NewGHC ...
-func NewGHC() Client {
+// NewClient ...
+func NewClient() Client {
 	tr := &http.Transport{
 		MaxIdleConns:    10,
 		IdleConnTimeout: 10 * time.Second,
@@ -37,26 +37,32 @@ func NewGHC() Client {
 }
 
 // SetRetryPolicy allows you to change the default retry-policy for the client
+// NOTE: changing the retry-policy for a http client shared between go-routines will cause a data-race
 func (g *RealClient) SetRetryPolicy(policy services.RetryPolicy) {
 	g.retryPolicy = policy
 }
 
 // SetCircuitBreaker allows you to change the default circuit-breaker for the client
+// NOTE: changing the circuit-breaker for a http client shared between go-routines will cause a data-race
 func (g *RealClient) SetCircuitBreaker(breaker services.Breaker) {
 	g.circuitBreaker = breaker
 }
 
 // SetTransport allows you to change the default http-transport for the client
+// NOTE: changing the http-transport for a http client shared between go-routines will cause a data-race
 func (g *RealClient) SetTransport(transport *http.Transport) {
 	g.client = &http.Client{Transport: transport}
 }
 
 // GetStatus returns whether or not the backing service is down or not
 func (g *RealClient) GetStatus() bool {
+	// TODO: if g.status is false, make a health check call on the service, if not 200 then return g.status
+	// else change g.status to true, then return it
 	return g.status
 }
 
 // SetStatus allows the client to specify if the backing service is down or not
+// NOTE: changing the status for a http client shared between go-routines will cause a data-race
 func (g *RealClient) SetStatus(status bool) {
 	g.status = status
 }
@@ -65,6 +71,9 @@ func (g *RealClient) SetStatus(status bool) {
 func (g *RealClient) ListKeys(username string) ([]Key, error) {
 	emptyResp := []Key{}
 
+	// TODO: figure out how to use retryPolicies and CircuitBreakers
+	// with methods like this one ... need to check the response codes, etc.
+	// before trying to json decode the response.
 	url := fmt.Sprintf("http://api.github.com/users/%s/keys", username)
 	resp, err := g.client.Get(url)
 	if err != nil {

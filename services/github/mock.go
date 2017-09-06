@@ -1,25 +1,30 @@
 package github
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/JKhawaja/rest-example/services"
+
+	"github.com/stretchr/testify/mock"
 )
 
 // MockClient ...
-type MockClient struct{}
+type MockClient struct {
+	mock.Mock
+}
 
-// NewMockGHC ...
-func NewMockGHC() Client {
+// NewMockClient ...
+func NewMockClient() Client {
 	return &MockClient{}
 }
 
+// Keys ...
+type Keys []Key
+
 // ListKeys ...
 func (g *MockClient) ListKeys(username string) ([]Key, error) {
-	fmt.Println(username)
-	response := []Key{}
-	return response, nil
+	args := g.Mock.Called(username)
+	return args.Get(0).(Keys), args.Error(1)
 }
 
 // SetRetryPolicy allows you to change the default retry-policy for the client

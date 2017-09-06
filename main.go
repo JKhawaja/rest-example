@@ -11,7 +11,6 @@ import (
 
 	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
-	"github.com/JKhawaja/rest-example/services/github"
 	"github.com/JKhawaja/rest-example/services/kubernetes"
 	"github.com/JKhawaja/rest-example/services/s3"
 	. "github.com/JKhawaja/rest-example/util"
@@ -81,11 +80,8 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
-	// GitHub Client
-	ghc := github.NewGHC()
-
 	// Mount "keys" controller
-	c := NewKeysController(service, ghc)
+	c := NewKeysController(service)
 	app.MountKeysController(service, c)
 
 	// Setup graceful server
