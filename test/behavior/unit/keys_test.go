@@ -1,6 +1,6 @@
 // +build unit
 
-package test
+package unit
 
 import (
 	"context"
@@ -17,7 +17,6 @@ func TestListKeys(t *testing.T) {
 	tests := [][]string{
 		{"tom", "dave"},
 		{"john", "john", "john"},
-		{"1234", "5678", "9101112"},
 	}
 
 	for _, usernames := range tests {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
+	"github.com/JKhawaja/rest-example/services/github"
 
 	"github.com/goadesign/goa"
 	"github.com/tylerb/graceful"
@@ -24,12 +25,15 @@ func NewMockServer() *graceful.Server {
 	// Service
 	service := goa.New("Mock Service")
 
+	// Mock GitHub Client
+	mockGH := github.NewMockClient()
+
 	// Mount "keys" controller
-	c := NewKeysController(service)
+	c := NewKeysController(service, mockGH)
 	app.MountKeysController(service, c)
 
 	return &graceful.Server{
 		Timeout: time.Duration(15) * time.Second,
-		Server:  &http.Server{Addr: ":8080", Handler: service.Mux},
+		Server:  &http.Server{Addr: ":9090", Handler: service.Mux},
 	}
 }

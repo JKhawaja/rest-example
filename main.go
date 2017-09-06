@@ -11,6 +11,7 @@ import (
 
 	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
+	"github.com/JKhawaja/rest-example/services/github"
 	"github.com/JKhawaja/rest-example/services/kubernetes"
 	"github.com/JKhawaja/rest-example/services/s3"
 	. "github.com/JKhawaja/rest-example/util"
@@ -74,6 +75,9 @@ func main() {
 	logger := logrus.New()
 	service.WithLogger(goalogrus.New(logger))
 
+	// GitHub Client
+	ghc := github.NewClient()
+
 	// Mount middleware
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(true))
@@ -81,7 +85,7 @@ func main() {
 	service.Use(middleware.Recover())
 
 	// Mount "keys" controller
-	c := NewKeysController(service)
+	c := NewKeysController(service, ghc)
 	app.MountKeysController(service, c)
 
 	// Setup graceful server
