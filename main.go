@@ -1,4 +1,4 @@
-//go:generate goagen bootstrap -d github.com/JKhawaja/rest-example/design
+//go:generate goagen bootstrap -d github.com/JKhawaja/rest-example/ssot
 
 package main
 

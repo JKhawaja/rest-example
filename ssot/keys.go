@@ -1,4 +1,4 @@
-package api
+package ssot
 
 import (
 	. "github.com/goadesign/goa/design"
