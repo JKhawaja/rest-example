@@ -7,7 +7,7 @@ import (
 
 	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
-	"github.com/JKhawaja/rest-example/services/github"
+	"github.com/JKhawaja/rest-example/test/mock"
 
 	"github.com/goadesign/goa"
 	"github.com/tylerb/graceful"
@@ -26,7 +26,7 @@ func NewMockServer() *graceful.Server {
 	service := goa.New("Mock Service")
 
 	// Mock GitHub Client
-	mockGH := github.NewMockClient()
+	mockGH := mock.NewGithubClient()
 
 	// Mount "keys" controller
 	c := NewKeysController(service, mockGH)

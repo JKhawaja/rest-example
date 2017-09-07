@@ -43,27 +43,3 @@ func NewBreaker(config BreakerConfig) Breaker {
 		CB: breaker.New(config.ErrorThreshold, config.SuccessThreshold, config.Timeout),
 	}
 }
-
-/*
-
-	// EXAMPLE:
-
-	for {
-		result := b.Run(func() error {
-			// communicate with some external service and
-			// return an error if the communication failed
-			return nil
-		})
-
-		switch result {
-		case nil:
-			// success!
-			// set service status to true
-		case breaker.ErrBreakerOpen:
-			// our function wasn't run because the breaker was open
-			// set service status to false
-		default:
-			// retry based on retryPolicy
-		}
-	}
-*/

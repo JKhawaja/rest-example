@@ -13,19 +13,20 @@ import (
 	"github.com/JKhawaja/rest-example/client"
 	"github.com/JKhawaja/rest-example/services/github"
 	"github.com/JKhawaja/rest-example/test"
+	"github.com/JKhawaja/rest-example/test/mock"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-// Integration Test
-func TestClient(t *testing.T) {
+// TestGithubClient ...
+func TestGithubClient(t *testing.T) {
 
 	// start NewMockServer()
 	mockServer := test.NewMockServer()
 	log.Fatal(mockServer.ListenAndServe())
 
 	// create Github mock Client
-	mockClient := &github.MockClient{}
+	mockClient := &mock.GithubClient{}
 
 	// create service client
 	serverClient := client.New(nil)
@@ -71,6 +72,7 @@ func TestClient(t *testing.T) {
 				if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
 					t.Fatalf("GitHub Client - ListKeys method - Test Case #1 failed with: %+v", err)
 				}
+
 				So(response[0].ID, ShouldEqual, 1)
 				So(response[0].Key, ShouldEqual, "david")
 			})

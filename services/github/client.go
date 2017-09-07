@@ -3,11 +3,12 @@ package github
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/JKhawaja/rest-example/services"
+
+	"gopkg.in/eapache/go-resiliency.v1/breaker"
 )
 
 // RealClient ...
@@ -15,11 +16,11 @@ type RealClient struct {
 	client         *http.Client
 	retryPolicy    services.RetryPolicy
 	circuitBreaker services.Breaker
-	status         bool
+	status         services.Status
 }
 
 // NewClient ...
-func NewClient() Client {
+func NewClient(status services.Status) Client {
 	tr := &http.Transport{
 		MaxIdleConns:    10,
 		IdleConnTimeout: 10 * time.Second,
@@ -28,11 +29,52 @@ func NewClient() Client {
 	policy := services.NewConstantRetryPolicy(100*time.Millisecond, 3)
 	breaker := services.NewBreaker(services.DefaultBreakerConfig)
 
-	return &RealClient{
+	realClient := &RealClient{
 		client:         &http.Client{Transport: tr},
 		retryPolicy:    policy,
 		circuitBreaker: breaker,
-		status:         true,
+		status:         status,
+	}
+
+	realClient.SetStatus(true)
+
+	return realClient
+}
+
+// Do ...
+func (g *RealClient) Do(req *http.Request) (*http.Response, error) {
+	response := &http.Response{}
+	b := g.circuitBreaker.CB
+	backoffs := g.retryPolicy.Backoffs()
+	retries := 0
+	for {
+		result := b.Run(func() error {
+			resp, err := g.client.Do(req)
+			response = resp
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+
+		switch result {
+		case nil:
+			// Success
+			g.SetStatus(true)
+			return response, nil
+		case breaker.ErrBreakerOpen:
+			// Circuit-Breaker open
+			g.SetStatus(false)
+			return response, breaker.ErrBreakerOpen
+		default:
+			// Otherwise, retry
+			if retries <= len(backoffs) && g.retryPolicy.Retry(req, response, result) {
+				time.Sleep(backoffs[retries])
+				retries++
+			} else {
+				return response, breaker.ErrBreakerOpen
+			}
+		}
 	}
 }
 
@@ -54,45 +96,81 @@ func (g *RealClient) SetTransport(transport *http.Transport) {
 	g.client = &http.Client{Transport: transport}
 }
 
-// GetStatus returns whether or not the backing service is down or not
+// GetStatus ...
 func (g *RealClient) GetStatus() bool {
-	// TODO: if g.status is false, make a health check call on the service, if not 200 then return g.status
-	// else change g.status to true, then return it
-	return g.status
+	if !g.status.Get("github") {
+		healthy, err := g.HealthCheck()
+		if err != nil {
+			return healthy
+		}
+
+		if healthy {
+			g.SetStatus(true)
+		} else {
+			return false
+		}
+	}
+
+	return true
 }
 
-// SetStatus allows the client to specify if the backing service is down or not
-// NOTE: changing the status for a http client shared between go-routines will cause a data-race
+// SetStatus ...
 func (g *RealClient) SetStatus(status bool) {
-	g.status = status
+	g.status.Set("github", status)
 }
 
 // ListKeys ...
 func (g *RealClient) ListKeys(username string) ([]Key, error) {
-	emptyResp := []Key{}
-
-	// TODO: figure out how to use retryPolicies and CircuitBreakers
-	// with methods like this one ... need to check the response codes, etc.
-	// before trying to json decode the response.
-	url := fmt.Sprintf("http://api.github.com/users/%s/keys", username)
-	resp, err := g.client.Get(url)
-	if err != nil {
-		return emptyResp, err
-	}
-	defer resp.Body.Close()
-
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		err := fmt.Errorf("Error reading GitHub response body: %+v for username: %s", err, username)
-		return emptyResp, err
-	}
-
 	var response []Key
-	err = json.Unmarshal(b, &response)
+
+	url := fmt.Sprintf("http://api.github.com/users/%s/keys", username)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		err := fmt.Errorf("Could not decode response format: %+v, for username: %s", err, username)
-		return emptyResp, err
+		return response, err
+	}
+
+	resp, err := g.Do(req)
+	if err != nil {
+		return response, err
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	if err != nil {
+		return response, err
 	}
 
 	return response, nil
+}
+
+// Health ...
+type Health struct {
+	Status  string `json:"status"`
+	Updated string `json:"last_updated"`
+}
+
+// HealthCheck ...
+func (g *RealClient) HealthCheck() (bool, error) {
+	// TODO: retry-policy and circuit-breaker pattern
+
+	url := "https://status.github.com/api/status.json"
+	resp, err := g.client.Get(url)
+	if err != nil {
+		return g.GetStatus(), err
+	}
+	defer resp.Body.Close()
+
+	var health Health
+	err = json.NewDecoder(resp.Body).Decode(&health)
+	if err != nil {
+		return g.GetStatus(), err
+	}
+
+	if health.Status != "good" || health.Status != "minor" {
+		g.SetStatus(false)
+		return false, nil
+	}
+
+	g.SetStatus(true)
+
+	return true, nil
 }

@@ -8,8 +8,12 @@ type Key struct {
 	Key string `json:"key"`
 }
 
+// Keys ...
+type Keys []Key
+
 // Client defines the standard interface for defining GitHub API access functions
 type Client interface {
 	services.Service
 	ListKeys(username string) ([]Key, error)
+	HealthCheck() (bool, error)
 }

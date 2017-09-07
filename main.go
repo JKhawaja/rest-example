@@ -11,6 +11,7 @@ import (
 
 	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
+	"github.com/JKhawaja/rest-example/services"
 	"github.com/JKhawaja/rest-example/services/github"
 	"github.com/JKhawaja/rest-example/services/kubernetes"
 	"github.com/JKhawaja/rest-example/services/s3"
@@ -76,7 +77,8 @@ func main() {
 	service.WithLogger(goalogrus.New(logger))
 
 	// GitHub Client
-	ghc := github.NewClient()
+	statuses := services.NewStatus()
+	ghc := github.NewClient(statuses)
 
 	// Mount middleware
 	service.Use(middleware.RequestID())
