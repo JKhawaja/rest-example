@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
+	"github.com/JKhawaja/rest-example/controllers/app"
 	"github.com/JKhawaja/rest-example/services"
 	"github.com/JKhawaja/rest-example/services/github"
 	"github.com/JKhawaja/rest-example/services/kubernetes"
@@ -76,19 +76,23 @@ func main() {
 	logger := logrus.New()
 	service.WithLogger(goalogrus.New(logger))
 
-	// GitHub Client
-	statuses := services.NewStatus()
-	ghc := github.NewClient(statuses)
-
 	// Mount middleware
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
+	// GitHub Client
+	statuses := services.NewStatus()
+	ghc := github.NewClient(statuses)
+
 	// Mount "keys" controller
 	c := NewKeysController(service, ghc)
 	app.MountKeysController(service, c)
+
+	// Mount "health" controller
+	c2 := NewHealthController(service)
+	app.MountHealthController(service, c2)
 
 	// Setup graceful server
 	server := &graceful.Server{

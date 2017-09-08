@@ -24,7 +24,6 @@ var _ = Resource("keys", func() {
 
 // UserKey is the type that represents a Github user's public SSH Key
 var UserKey = Type("UserKey", func() {
-
 	Description("Type for a GitHub user's public SSH Key")
 
 	Attribute("id", Integer, "The ID of the public SSH key on GitHub.", func() {
@@ -38,7 +37,6 @@ var UserKey = Type("UserKey", func() {
 
 // User ...
 var User = MediaType("application/vnd.User+json", func() {
-
 	Description("Response Type for a GitHub User's list of public SSH Keys")
 
 	Attribute("username", String, "The username of the GitHub user.", func() {

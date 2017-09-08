@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/JKhawaja/rest-example/app"
+	"github.com/JKhawaja/rest-example/controllers/app"
 	"github.com/JKhawaja/rest-example/services/github"
 )
 

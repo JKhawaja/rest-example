@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/JKhawaja/rest-example/app"
+	"github.com/JKhawaja/rest-example/controllers/app"
 	"github.com/JKhawaja/rest-example/services/github"
 	. "github.com/JKhawaja/rest-example/util"
 

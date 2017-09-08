@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/JKhawaja/rest-example/app"
 	. "github.com/JKhawaja/rest-example/controllers"
+	"github.com/JKhawaja/rest-example/controllers/app"
 	"github.com/JKhawaja/rest-example/test/mock"
 
 	"github.com/goadesign/goa"
