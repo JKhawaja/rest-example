@@ -6,8 +6,8 @@ default: build unit integration
 gen:
 	goagen app -d github.com/JKhawaja/rest-example/ssot -o ./controllers
 	goagen controller -d github.com/JKhawaja/rest-example/ssot -o ./controllers
-	goagen swagger -d github.com/JKhawaja/rest-example/ssot
-	goagen schema -d github.com/JKhawaja/rest-example/ssot
+	goagen swagger -d github.com/JKhawaja/rest-example/ssot -o ./docs
+	goagen schema -d github.com/JKhawaja/rest-example/ssot -o ./docs
 	goagen client -d github.com/JKhawaja/rest-example/ssot
 	rm -r tool/
 	go install ./controllers/app/ ./client/ ./controllers/
