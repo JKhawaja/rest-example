@@ -33,9 +33,16 @@ func NewKeysController(service *goa.Service, client github.Client) *KeysControll
 
 // List runs the list action.
 func (c *KeysController) List(ctx *app.ListKeysContext) error {
+
+	// check if GitHub is up
+	if !c.Client.GetStatus() {
+		err := fmt.Errorf("GitHub may be temporarily down. Please try again.")
+		return ctx.GatewayTimeout(err)
+	}
+
 	var response []User
 
-	// check that username has been provided (unecessary as already checked by goa)
+	// check that username has been provided
 	if len(ctx.Payload) < 1 {
 		return ctx.BadRequest(fmt.Errorf("Please provide a username."))
 	}
@@ -47,7 +54,9 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 	for _, name := range names {
 		keys, err := c.Client.ListKeys(name)
 		if err != nil {
-			goalogrus.Entry(ctx).Errorf("GitHub API Access error: %+v", err)
+			if _, ok := ctx.Context.Value("test").(bool); !ok {
+				goalogrus.Entry(ctx).Errorf("GitHub API access error: %+v", err)
+			}
 			return ctx.InternalServerError()
 		}
 

@@ -101,7 +101,7 @@ func (g *RealClient) GetStatus() bool {
 	if !g.status.Get("github") {
 		healthy, err := g.HealthCheck()
 		if err != nil {
-			return healthy
+			return false
 		}
 
 		if healthy {

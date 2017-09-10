@@ -22,7 +22,7 @@ func NewGithubClient() github.Client {
 // ListKeys ...
 func (g *GithubClient) ListKeys(username string) ([]github.Key, error) {
 	args := g.Mock.Called(username)
-	return args.Get(0).(github.Keys), args.Error(1)
+	return args.Get(0).([]github.Key), args.Error(1)
 }
 
 // HealthCheck ...

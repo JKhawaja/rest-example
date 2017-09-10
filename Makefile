@@ -11,15 +11,15 @@ gen:
 	goagen client -d github.com/JKhawaja/rest-example/ssot
 	rm -r tool/
 	go install ./controllers/app/ ./client/ ./controllers/
+ifneq (ls -l | grep -v ^l | grep -l "goagen" | wc -l, 0)
 	rm -r goagen*
+endif
 
 get: 
 	go get ./...
 
 #fmt:
 #	diff -u <(echo -n) <(gofmt -s -d ./...)
-
-# don't bother using this test command
 
 integration:
 	# Run:
@@ -30,6 +30,7 @@ integration:
 
 repo: get build
 
+# don't bother using this test command
 test:
 	go test -v ./...
 

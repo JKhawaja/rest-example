@@ -81,20 +81,14 @@ func (ctx *ListKeysContext) BadRequest(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
-// Unauthorized sends a HTTP response with status code 401.
-func (ctx *ListKeysContext) Unauthorized(r error) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
-	return ctx.ResponseData.Service.Send(ctx.Context, 401, r)
-}
-
-// NotFound sends a HTTP response with status code 404.
-func (ctx *ListKeysContext) NotFound(r error) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
-	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
-}
-
 // InternalServerError sends a HTTP response with status code 500.
 func (ctx *ListKeysContext) InternalServerError() error {
 	ctx.ResponseData.WriteHeader(500)
 	return nil
+}
+
+// GatewayTimeout sends a HTTP response with status code 504.
+func (ctx *ListKeysContext) GatewayTimeout(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 504, r)
 }
