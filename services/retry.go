@@ -161,13 +161,18 @@ func (e *ExponentialRetryPolicy) Backoffs() []time.Duration {
 	b.RandomizationFactor = e.config.RandomizationFactor
 	b.Multiplier = e.config.Multiplier
 
+	total := 0 * time.Millisecond
 	for {
 		d := b.NextBackOff()
 		switch d {
 		case backoff.Stop:
 			return durations
 		default:
+			if total >= b.MaxElapsedTime {
+				return durations
+			}
 			durations = append(durations, d)
+			total += d
 		}
 	}
 }

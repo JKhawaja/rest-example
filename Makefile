@@ -34,7 +34,6 @@ repo: get build
 test:
 	go test -v ./...
 
-# NOTE: unit testing requires a running instance of the server on localhost:8080
 unit:
 	go test -v -tags unit ./...
 

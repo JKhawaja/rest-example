@@ -18,7 +18,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// TestListKeys ...
+// Intra-Unitary tests for ListKeys handler in KeysController
 func TestListKeys(t *testing.T) {
 
 	// Real Service

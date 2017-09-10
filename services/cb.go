@@ -8,9 +8,9 @@ import (
 
 // BreakerConfig ...
 type BreakerConfig struct {
-	// NOTE: should set error threshold to the length of the backoffs slice in the RetryPoliicy (!!)
+	// NOTE: should set ErrorThreshold to the length of the backoffs slice in the RetryPoliicy (!!)
 	ErrorThreshold int
-	// NOTE: SuccessThreshold should almost always be 1
+	// NOTE: SuccessThreshold should almost always be 1; this determines the number of times a CB will retry after breaking
 	SuccessThreshold int
 	Timeout          time.Duration
 }
