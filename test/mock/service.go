@@ -60,7 +60,7 @@ func (m *MockService) Do(req *http.Request) (*http.Response, error) {
 			return response, breaker.ErrBreakerOpen
 		default:
 			// Otherwise, retry
-			if retries <= len(backoffs) && m.RetryPolicy.Retry(req, response, result) {
+			if retries <= len(backoffs) && m.RetryPolicy.Retry(req) {
 				time.Sleep(backoffs[retries])
 				retries++
 			} else {

@@ -1,7 +1,7 @@
+default: build unit integration
+
 build:
 	go install -v ./...
-
-default: build unit integration
 
 gen:
 	goagen app -d github.com/JKhawaja/rest-example/ssot -o ./controllers

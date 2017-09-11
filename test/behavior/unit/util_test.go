@@ -24,3 +24,21 @@ func TestRemoveDuplicates(t *testing.T) {
 		}
 	}
 }
+
+func TestNameVerification(t *testing.T) {
+	invalidNames := [][]string{
+		{"1wrong", "2wrong", "3wrong"},
+		{"correct", "still-correct", "still-correct1234"},
+		{"incorrect", "still--incorrect", "-very--incorrect-"},
+		{"this-one-is-just-way-too-long-to-be-a-valid-github-username-1234"},
+	}
+
+	for i, names := range invalidNames {
+		_, ret := util.NameVerification(names)
+
+		if i != 1 && ret {
+			t.Fatalf("Util Test - NameVerification - failed to mark incorrect username as incorrect: %+v", names)
+		}
+	}
+
+}

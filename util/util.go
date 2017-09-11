@@ -5,10 +5,18 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 
 	"github.com/JKhawaja/rest-example/controllers/app"
 	"github.com/JKhawaja/rest-example/services/github"
 )
+
+var usernameRegex *regexp.Regexp
+
+func init() {
+	// FIXME: regex does not detect length (failing test)
+	usernameRegex = regexp.MustCompile(`^[a-z](?:[a-z0-9]|-(?:[a-z0-9])).{0,38}$`)
+}
 
 // RemoveDuplicates ...
 func RemoveDuplicates(names []string) []string {
@@ -25,6 +33,17 @@ func RemoveDuplicates(names []string) []string {
 	}
 
 	return result
+}
+
+// NameVerification ...
+func NameVerification(names []string) (string, bool) {
+	for _, s := range names {
+		if !usernameRegex.MatchString(s) {
+			return s, false
+		}
+	}
+
+	return "", true
 }
 
 // ConvertList ...

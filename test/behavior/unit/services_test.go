@@ -43,14 +43,14 @@ func TestServices(t *testing.T) {
 	}
 
 	// Single-Retry Policy
-	policy = services.NewSingleRetryPolicy(100 * time.Millisecond)
-	mockService.SetRetryPolicy(policy)
-	breaker = services.NewBreaker(services.BreakerConfig{
-		ErrorThreshold:   len(policy.Backoffs()),
+	policy2 := services.NewSingleRetryPolicy(100 * time.Millisecond)
+	mockService.SetRetryPolicy(policy2)
+	breaker2 := services.NewBreaker(services.BreakerConfig{
+		ErrorThreshold:   len(policy2.Backoffs()),
 		SuccessThreshold: 1,
 		Timeout:          10 * time.Second,
 	})
-	mockService.SetCircuitBreaker(breaker)
+	mockService.SetCircuitBreaker(breaker2)
 
 	req, err = http.NewRequest("GET", "localhost:8080", nil)
 	if err != nil {
@@ -67,14 +67,14 @@ func TestServices(t *testing.T) {
 	}
 
 	// Constant-Retry Policy
-	policy = services.NewConstantRetryPolicy(100*time.Millisecond, 5)
-	mockService.SetRetryPolicy(policy)
-	breaker = services.NewBreaker(services.BreakerConfig{
-		ErrorThreshold:   len(policy.Backoffs()),
+	policy3 := services.NewConstantRetryPolicy(100*time.Millisecond, 5)
+	mockService.SetRetryPolicy(policy3)
+	breaker3 := services.NewBreaker(services.BreakerConfig{
+		ErrorThreshold:   len(policy3.Backoffs()),
 		SuccessThreshold: 1,
 		Timeout:          10 * time.Second,
 	})
-	mockService.SetCircuitBreaker(breaker)
+	mockService.SetCircuitBreaker(breaker3)
 
 	req, err = http.NewRequest("GET", "localhost:8080", nil)
 	if err != nil {
@@ -91,14 +91,14 @@ func TestServices(t *testing.T) {
 	}
 
 	// Exponential-Retry Policy
-	policy = services.NewExponentialRetryPolicy(services.DefaultBackoffConfig)
-	mockService.SetRetryPolicy(policy)
-	breaker = services.NewBreaker(services.BreakerConfig{
-		ErrorThreshold:   len(policy.Backoffs()),
+	policy4 := services.NewExponentialRetryPolicy(services.DefaultBackoffConfig)
+	mockService.SetRetryPolicy(policy4)
+	breaker4 := services.NewBreaker(services.BreakerConfig{
+		ErrorThreshold:   len(policy4.Backoffs()),
 		SuccessThreshold: 1,
 		Timeout:          10 * time.Second,
 	})
-	mockService.SetCircuitBreaker(breaker)
+	mockService.SetCircuitBreaker(breaker4)
 
 	req, err = http.NewRequest("GET", "localhost:8080", nil)
 	if err != nil {
@@ -115,6 +115,15 @@ func TestServices(t *testing.T) {
 	}
 
 	// Fake Working Service ...
+	policy5 := services.NewExponentialRetryPolicy(services.DefaultBackoffConfig)
+	mockService.SetRetryPolicy(policy5)
+	breaker5 := services.NewBreaker(services.BreakerConfig{
+		ErrorThreshold:   len(policy5.Backoffs()),
+		SuccessThreshold: 1,
+		Timeout:          10 * time.Second,
+	})
+	mockService.SetCircuitBreaker(breaker5)
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Hello, client")
 	}))

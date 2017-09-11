@@ -10,7 +10,7 @@ import (
 // RetryPolicy ...
 type RetryPolicy interface {
 	Backoffs() []time.Duration
-	Retry(*http.Request, *http.Response, error) bool
+	Retry(*http.Request) bool
 }
 
 // NoRetryPolicy ...
@@ -27,7 +27,7 @@ func (n *NoRetryPolicy) Backoffs() []time.Duration {
 }
 
 // Retry ...
-func (n *NoRetryPolicy) Retry(*http.Request, *http.Response, error) bool {
+func (n *NoRetryPolicy) Retry(req *http.Request) bool {
 	return false
 }
 
@@ -49,10 +49,9 @@ func (s *SingleRetryPolicy) Backoffs() []time.Duration {
 }
 
 // Retry ...
-func (s *SingleRetryPolicy) Retry(req *http.Request, resp *http.Response, err error) bool {
+func (s *SingleRetryPolicy) Retry(req *http.Request) bool {
 	// do not retry POST and PATCH methods (as they are not indempotent)
-	if err != nil || req.Method == "POST" || req.Method == "PATCH" ||
-		resp.StatusCode < 500 {
+	if req.Method == "POST" || req.Method == "PATCH" {
 		return false
 	}
 	return true
@@ -83,10 +82,9 @@ func (c *ConstantRetryPolicy) Backoffs() []time.Duration {
 }
 
 // Retry ...
-func (c *ConstantRetryPolicy) Retry(req *http.Request, resp *http.Response, err error) bool {
+func (c *ConstantRetryPolicy) Retry(req *http.Request) bool {
 	// do not retry POST and PATCH methods (as they are not indempotent)
-	if err != nil || req.Method == "POST" || req.Method == "PATCH" ||
-		resp.StatusCode < 500 {
+	if req.Method == "POST" || req.Method == "PATCH" {
 		return false
 	}
 	return true
@@ -161,7 +159,7 @@ func (e *ExponentialRetryPolicy) Backoffs() []time.Duration {
 	b.RandomizationFactor = e.config.RandomizationFactor
 	b.Multiplier = e.config.Multiplier
 
-	total := 0 * time.Millisecond
+	total := 1 * time.Millisecond
 	for {
 		d := b.NextBackOff()
 		switch d {
@@ -170,18 +168,18 @@ func (e *ExponentialRetryPolicy) Backoffs() []time.Duration {
 		default:
 			if total >= b.MaxElapsedTime {
 				return durations
+			} else {
+				durations = append(durations, d)
+				total += d
 			}
-			durations = append(durations, d)
-			total += d
 		}
 	}
 }
 
 // Retry ...
-func (e *ExponentialRetryPolicy) Retry(req *http.Request, resp *http.Response, err error) bool {
+func (e *ExponentialRetryPolicy) Retry(req *http.Request) bool {
 	// do not retry POST and PATCH methods (as they are not indempotent)
-	if err != nil || req.Method == "POST" || req.Method == "PATCH" ||
-		resp.StatusCode < 500 {
+	if req.Method == "POST" || req.Method == "PATCH" {
 		return false
 	}
 	return true
