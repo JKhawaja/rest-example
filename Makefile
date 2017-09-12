@@ -1,4 +1,9 @@
-default: build unit integration
+SYSTEM_DATE = $(SYSTEM_DATE)/$(shell date)
+
+default: build unit integration benchmark
+
+benchmark:
+	go test -tags=benchmark -bench=. ./... > ./test/performance/benchmark/$(shell date "+%F-%H-%M-%S").benchmark
 
 build:
 	go install -v ./...
@@ -18,6 +23,10 @@ endif
 get: 
 	go get ./...
 
+fuzzbuild:
+	go-fuzz-build -func=FuzzRemoveDuplicates -o ./test/behavior/fuzz/removeDuplicates.zip github.com/JKhawaja/rest-example/test/behavior/fuzz
+	go-fuzz-build -func=FuzzNameVerification -o ./test/behavior/fuzz/nameVerification.zip github.com/JKhawaja/rest-example/test/behavior/fuzz
+
 #fmt:
 #	diff -u <(echo -n) <(gofmt -s -d ./...)
 
@@ -33,6 +42,9 @@ repo: get build
 # don't bother using this test command
 test:
 	go test -v ./...
+
+	# Cross compile test binaries
+	# GOOS=foo GOARCH=bar go test -c
 
 unit:
 	go test -v -tags unit ./...

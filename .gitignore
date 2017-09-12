@@ -14,12 +14,17 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
-# TODO files
-
+# todo files
 *.todo
 
-# Vendor Files
+# vendor directory
 .vendor/
 
-# Test JSON files
+# test json files
 *test.json*
+
+# benchmark files
+*.benchmark
+
+# go-fuzz-build files
+*.zip
