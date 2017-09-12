@@ -53,8 +53,8 @@ func TestListKeys(t *testing.T) {
 
 	// Bad Request Test
 	_, err := test.ListKeysBadRequest(t, nil, service2, ctrlr2, payloads[1])
-	if err.Error() != "Please provide a username." {
-		t.Fatalf("ListKeysBadRequest test errored out with: %+v ", err)
+	if err == nil {
+		t.Fatal("ListKeys - BadRequest - No Username - did not error out")
 	}
 
 	// Gateway Timeout Error

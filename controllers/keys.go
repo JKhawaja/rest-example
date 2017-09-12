@@ -44,12 +44,13 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 
 	// check that username has been provided
 	if len(ctx.Payload) < 1 {
-		return ctx.BadRequest(fmt.Errorf("Please provide a username."))
+		return ctx.BadRequest(goa.ErrBadRequest("Please provide a username."))
 	}
 
 	// verify that usernames are valid GitHub usernames
 	if str, ok := NameVerification(ctx.Payload); !ok {
-		return ctx.BadRequest(fmt.Errorf("Invalid GitHub username: %s", str))
+		err := fmt.Errorf("Invalid GitHub username: %s", str)
+		return ctx.BadRequest(goa.ErrBadRequest(err))
 	}
 
 	// remove any duplicate names in request
