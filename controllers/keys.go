@@ -5,16 +5,17 @@ import (
 
 	"github.com/JKhawaja/rest-example/controllers/app"
 	"github.com/JKhawaja/rest-example/services/github"
+	"github.com/JKhawaja/rest-example/services/logger"
 	. "github.com/JKhawaja/rest-example/util"
 
 	"github.com/goadesign/goa"
-	"github.com/goadesign/goa/logging/logrus"
 )
 
 // KeysController implements the keys resource.
 type KeysController struct {
 	*goa.Controller
 	Client github.Client
+	Logger logger.Logger
 }
 
 // User is the type for GitHub user's...
@@ -25,9 +26,11 @@ type User struct {
 
 // NewKeysController creates a keys controller.
 func NewKeysController(service *goa.Service, client github.Client) *KeysController {
+
 	return &KeysController{
 		Controller: service.NewController("KeysController"),
 		Client:     client,
+		Logger:     logger.NewLogClient(),
 	}
 }
 
@@ -45,6 +48,8 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 	// check that username has been provided
 	if len(ctx.Payload) < 1 {
 		return ctx.BadRequest(goa.ErrBadRequest("Please provide a username."))
+	} else if len(ctx.Payload) > 10 {
+		return ctx.BadRequest(goa.ErrBadRequest("Too many usernames. Please provide no more than 10 usernames."))
 	}
 
 	// verify that usernames are valid GitHub usernames
@@ -60,9 +65,7 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 	for _, name := range names {
 		keys, err := c.Client.ListKeys(name)
 		if err != nil {
-			if _, ok := ctx.Context.Value("test").(bool); !ok {
-				goalogrus.Entry(ctx).Errorf("GitHub API access error: %+v", err)
-			}
+			c.Logger.LogWithContext(ctx, fmt.Errorf("GitHub API access error: %+v", err))
 			return ctx.InternalServerError()
 		}
 

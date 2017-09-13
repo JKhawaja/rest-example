@@ -1,4 +1,4 @@
 FROM scratch
-MAINTAINER Jeremy Khawaja <jeremythejudicious@gmail.com>
+MAINTAINER Jeremy Khawaja
 ADD rest-example /rest-example
 ENTRYPOINT ["/rest-example"]

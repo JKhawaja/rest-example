@@ -15,3 +15,17 @@ func BenchmarkRemoveDuplicates(b *testing.B) {
 		util.RemoveDuplicates(names)
 	}
 }
+
+func BenchmarkNameVerification(b *testing.B) {
+	invalidNames := [][]string{
+		{"1wrong", "2wrong", "3wrong"},
+		{"incorrect", "still--incorrect", "-very--incorrect-"},
+		{"this-one-is-just-way-too-long-to-be-a-valid-github-username-1234"},
+	}
+
+	for n := 0; n < b.N; n++ {
+		for _, names := range invalidNames {
+			util.NameVerification(names)
+		}
+	}
+}

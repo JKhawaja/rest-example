@@ -1,9 +1,17 @@
-SYSTEM_DATE = $(SYSTEM_DATE)/$(shell date)
-
-default: build unit integration benchmark
+default: build unit benchmark
 
 benchmark:
-	go test -tags=benchmark -bench=. ./... > ./test/performance/benchmark/$(shell date "+%F-%H-%M-%S").benchmark
+
+ifeq ($(shell ls -R test/performance/benchmark/ | grep \.benchmark$ | wc -l), 1)
+	go test -tags=benchmark -benchtime=2s -bench=. ./... > ./test/performance/benchmark/current.benchmark
+else ifeq ($(shell ls -R test/performance/benchmark/ | grep \.benchmark$ | wc -l), 2)
+	go test -tags=benchmark -benchtime=2s -bench=. ./... > ./test/performance/benchmark/new.benchmark
+else
+	go test -tags=benchmark -benchtime=2s -bench=. ./... > ./test/performance/benchmark/new-$(shell date "+%F-%H-%M-%S").benchmark
+endif
+
+benchcmp:
+	benchcmp -changed -mag ./test/performance/benchmark/current.benchmark ./test/performance/benchmark/new.benchmark
 
 build:
 	go install -v ./...
@@ -44,7 +52,7 @@ test:
 	go test -v ./...
 
 	# Cross compile test binaries
-	# GOOS=foo GOARCH=bar go test -c
+	# GOOS=linux GOARCH=amd64 go test -c
 
 unit:
 	go test -v -tags unit ./...

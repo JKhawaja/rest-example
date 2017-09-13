@@ -14,7 +14,6 @@ import (
 var usernameRegex *regexp.Regexp
 
 func init() {
-	// FIXME: regex does not detect length (failing test)
 	usernameRegex = regexp.MustCompile(`^[a-z](?:[a-z0-9]|-(?:[a-z0-9])).{0,38}$`)
 }
 
