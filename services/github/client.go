@@ -177,7 +177,7 @@ func (g *RealClient) ListKeys(username string) ([]Key, GHError) {
 
 // HealthCheck ...
 func (g *RealClient) HealthCheck() (bool, GHError) {
-	// TODO: retry-policy and circuit-breaker pattern
+	// TODO: possible add a retry-policy and circuit-breaker pattern
 
 	errorResponse := GHError{}
 
