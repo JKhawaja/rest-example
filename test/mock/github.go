@@ -20,14 +20,18 @@ func NewGithubClient() github.Client {
 }
 
 // ListKeys ...
-func (g *GithubClient) ListKeys(username string) ([]github.Key, error) {
+func (g *GithubClient) ListKeys(username string) ([]github.Key, github.GHError) {
 	args := g.Mock.Called(username)
-	return args.Get(0).([]github.Key), args.Error(1)
+	errorResponse := github.GHError{
+		Error: args.Error(1),
+	}
+
+	return args.Get(0).([]github.Key), errorResponse
 }
 
 // HealthCheck ...
-func (g *GithubClient) HealthCheck() (bool, error) {
-	return true, nil
+func (g *GithubClient) HealthCheck() (bool, github.GHError) {
+	return true, github.GHError{}
 }
 
 // Do ...

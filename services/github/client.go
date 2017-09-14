@@ -36,6 +36,7 @@ type Error struct {
 type GHError struct {
 	Message string  `json:"message"`
 	Errors  []Error `json:"errors"`
+	Error   error
 }
 
 // NewClient ...
@@ -119,7 +120,7 @@ func (g *RealClient) SetTransport(transport *http.Transport) {
 func (g *RealClient) GetStatus() bool {
 	if !g.status.Get("github") {
 		healthy, err := g.HealthCheck()
-		if err != nil {
+		if err.Error != nil {
 			return false
 		}
 
@@ -139,61 +140,68 @@ func (g *RealClient) SetStatus(status bool) {
 }
 
 // ListKeys ...
-func (g *RealClient) ListKeys(username string) ([]Key, error) {
+func (g *RealClient) ListKeys(username string) ([]Key, GHError) {
 	var response []Key
-	var errorResponse GHError
+	errorResponse := GHError{}
 
 	url := fmt.Sprintf("http://api.github.com/users/%s/keys", username)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return response, err
+		errorResponse.Error = err
+		return response, errorResponse
 	}
 
 	resp, err := g.Do(req)
 	if err != nil {
-		return response, err
+		errorResponse.Error = err
+		return response, errorResponse
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		err = json.NewDecoder(resp.Body).Decode(&response)
 		if err != nil {
-			return response, err
+			errorResponse.Error = err
+			return response, errorResponse
 		}
 	} else {
 		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
 		if err != nil {
-			return response, err
+			errorResponse.Error = err
+			return response, errorResponse
 		}
-		err = fmt.Errorf("GitHub API access error: %+v", errorResponse)
-		return response, err
+		return response, errorResponse
 	}
 
-	return response, nil
+	return response, errorResponse
 }
 
 // HealthCheck ...
-func (g *RealClient) HealthCheck() (bool, error) {
+func (g *RealClient) HealthCheck() (bool, GHError) {
 	// TODO: retry-policy and circuit-breaker pattern
+
+	errorResponse := GHError{}
 
 	url := "https://status.github.com/api/status.json"
 	resp, err := g.client.Get(url)
 	if err != nil {
-		return g.GetStatus(), err
+		errorResponse.Error = err
+		return g.GetStatus(), errorResponse
 	}
 	defer resp.Body.Close()
 
 	var health Health
 	err = json.NewDecoder(resp.Body).Decode(&health)
 	if err != nil {
-		return g.GetStatus(), err
+		errorResponse.Error = err
+		return g.GetStatus(), errorResponse
 	}
 
 	if health.Status != "good" || health.Status != "minor" {
 		g.SetStatus(false)
-		return false, nil
+		return false, errorResponse
 	}
 
 	g.SetStatus(true)
 
-	return true, nil
+	return true, errorResponse
 }

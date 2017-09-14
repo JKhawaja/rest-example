@@ -63,9 +63,9 @@ func (c *KeysController) List(ctx *app.ListKeysContext) error {
 
 	// get keys for each username
 	for _, name := range names {
-		keys, err := c.Client.ListKeys(name)
-		if err != nil {
-			c.Logger.LogWithContext(ctx, fmt.Errorf("GitHub API access error: %+v", err))
+		keys, resp := c.Client.ListKeys(name)
+		if resp.Error != nil {
+			c.Logger.LogWithContext(ctx, fmt.Errorf("GitHub API access error: %+v", resp.Error))
 			return ctx.InternalServerError()
 		}
 
