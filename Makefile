@@ -40,10 +40,14 @@ fuzzbuild:
 
 integration:
 	# Run:
-	go test -v -tags integration ./...
+	go test -v -tags=integration -race ./...
 
 	# Build:
 	# go test -o ./test/behavior/integration/integration.test.exe -c --tags integration ./test/behavior/integration
+
+load:
+	# NOTE: must have instance of server running before performing load tests
+	go test -v -tags=load -race ./...
 
 repo: get build
 
@@ -55,7 +59,7 @@ test:
 	# GOOS=linux GOARCH=amd64 go test -c
 
 unit:
-	go test -v -tags unit ./...
+	go test -v -tags=unit -race ./...
 
 vet:
 	go vet -v -x ./...

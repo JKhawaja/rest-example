@@ -19,6 +19,25 @@ type RealClient struct {
 	status         services.Status
 }
 
+// Health ...
+type Health struct {
+	Status  string `json:"status"`
+	Updated string `json:"last_updated"`
+}
+
+// Error ...
+type Error struct {
+	Resource string `json:"resource"`
+	Field    string `json:"field"`
+	Code     string `json:"code"`
+}
+
+// GHError ...
+type GHError struct {
+	Message string  `json:"message"`
+	Errors  []Error `json:"errors"`
+}
+
 // NewClient ...
 func NewClient(status services.Status) Client {
 	tr := &http.Transport{
@@ -122,6 +141,7 @@ func (g *RealClient) SetStatus(status bool) {
 // ListKeys ...
 func (g *RealClient) ListKeys(username string) ([]Key, error) {
 	var response []Key
+	var errorResponse GHError
 
 	url := fmt.Sprintf("http://api.github.com/users/%s/keys", username)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -134,18 +154,21 @@ func (g *RealClient) ListKeys(username string) ([]Key, error) {
 		return response, err
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
+	if resp.StatusCode == http.StatusOK {
+		err = json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			return response, err
+		}
+	} else {
+		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
+		if err != nil {
+			return response, err
+		}
+		err = fmt.Errorf("GitHub API access error: %+v", errorResponse)
 		return response, err
 	}
 
 	return response, nil
-}
-
-// Health ...
-type Health struct {
-	Status  string `json:"status"`
-	Updated string `json:"last_updated"`
 }
 
 // HealthCheck ...
