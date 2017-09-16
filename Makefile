@@ -1,19 +1,34 @@
-default: build unit benchmark
+default: bild unit bnch prof
 
-benchmark:
+bnch: benchmark-util benchmark-controllers
 
-ifeq ($(shell ls -R test/performance/benchmark/ | grep \.benchmark$ | wc -l), 1)
-	go test -tags=benchmark -benchtime=2s -bench=. ./... > ./test/performance/benchmark/current.benchmark
-else ifeq ($(shell ls -R test/performance/benchmark/ | grep \.benchmark$ | wc -l), 2)
-	go test -tags=benchmark -benchtime=2s -bench=. ./... > ./test/performance/benchmark/new.benchmark
-else
-	go test -tags=benchmark -benchtime=2s -bench=. ./... > ./test/performance/benchmark/new-$(shell date "+%F-%H-%M-%S").benchmark
-endif
+benchmark-util:
+	go test -tags=benchmark -benchtime=2s -bench=. ./test/performance/benchmark/util/... > ./test/performance/benchmark/util/current.benchmark
 
-benchcmp:
-	benchcmp -changed -mag ./test/performance/benchmark/current.benchmark ./test/performance/benchmark/new.benchmark
+benchmark-controllers:
+	go test -tags=benchmark -benchtime=2s -bench=. ./test/performance/benchmark/controllers/... > ./test/performance/benchmark/controllers/current.benchmark
 
-build:
+benchcmp: benchcmp-util benchcmp-controllers
+
+benchcmp-util:
+	go test -tags=benchmark -benchtime=2s -bench=. ./test/performance/benchmark/util/... > ./test/performance/benchmark/util/new.benchmark
+	benchcmp -changed -mag ./test/performance/benchmark/util/current.benchmark ./test/performance/benchmark/util/new.benchmark > ./test/performance/benchmark/util/compare.benchmark
+
+benchcmp-controllers:
+	go test -tags=benchmark -benchtime=2s -bench=. ./test/performance/benchmark/controllers/... > ./test/performance/benchmark/controllers/new.benchmark
+	benchcmp -changed -mag ./test/performance/benchmark/controllers/current.benchmark ./test/performance/benchmark/controllers/new.benchmark > ./test/performance/benchmark/controllers/compare.benchmark
+
+prof: profile-util profile-controllers
+
+profile-util:
+	go test -tags=benchmark -benchtime=2s -bench=. -cpuprofile=./test/performance/profile/util/cpu.profile ./test/performance/benchmark/util
+	go-torch -f=./test/performance/profile/profile.svg ./test/performance/profile/util/cpu.profile
+
+profile-controllers:
+	go test -tags=benchmark -benchtime=2s -bench=. -cpuprofile=./test/performance/profile/controllers/cpu.profile ./test/performance/benchmark/controllers
+	go-torch -f=./test/performance/profile/controllers/profile.svg ./test/performance/profile/controllers/cpu.profile
+
+bild:
 	go install -v ./...
 
 gen:

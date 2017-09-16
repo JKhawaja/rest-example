@@ -64,6 +64,7 @@ func ConvertList(list []github.Key) []*app.UserKey {
 // BuildBinary ...
 // FIXME: does not work on Windows
 func BuildBinary(name string) (string, error) {
+
 	// directory
 	tmpDir, err := ioutil.TempDir("", "")
 	if err != nil {

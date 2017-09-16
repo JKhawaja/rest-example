@@ -28,3 +28,9 @@
 
 # go-fuzz-build files
 *.zip
+
+# profile files
+*.profile
+
+# go-torch svg files
+*.svg
