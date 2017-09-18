@@ -1,3 +1,5 @@
+REST = github.com/JKhawaja/rest-example/ssot
+
 default: bild unit bnch prof
 
 bnch: benchmark-util benchmark-controllers
@@ -32,11 +34,11 @@ bild:
 	go install -v ./...
 
 gen:
-	goagen app -d github.com/JKhawaja/rest-example/ssot -o ./controllers
-	goagen controller -d github.com/JKhawaja/rest-example/ssot -o ./controllers
-	goagen swagger -d github.com/JKhawaja/rest-example/ssot -o ./docs
-	goagen schema -d github.com/JKhawaja/rest-example/ssot -o ./docs
-	goagen client -d github.com/JKhawaja/rest-example/ssot
+	goagen app -d $(REST) -o ./controllers
+	goagen controller -d $(REST)  -o ./controllers
+	goagen swagger -d $(REST)  -o ./docs
+	goagen schema -d $(REST)  -o ./docs
+	goagen client -d $(REST) 
 	rm -r tool/
 	go install ./controllers/app/ ./client/ ./controllers/
 ifneq (ls -l | grep -v ^l | grep -l "goagen" | wc -l, 0)
@@ -64,7 +66,7 @@ load:
 	# NOTE: must have instance of server running before performing load tests
 	go test -v -tags=load -race ./...
 
-repo: get build
+repo: get bild
 
 # don't bother using this test command
 test:
