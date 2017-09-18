@@ -52,9 +52,6 @@ fuzzbuild:
 	go-fuzz-build -func=FuzzRemoveDuplicates -o ./test/behavior/fuzz/removeDuplicates.zip github.com/JKhawaja/rest-example/test/behavior/fuzz
 	go-fuzz-build -func=FuzzNameVerification -o ./test/behavior/fuzz/nameVerification.zip github.com/JKhawaja/rest-example/test/behavior/fuzz
 
-#fmt:
-#	diff -u <(echo -n) <(gofmt -s -d ./...)
-
 integration:
 	# Run:
 	go test -v -tags=integration -race ./...
@@ -68,9 +65,8 @@ load:
 
 repo: get bild
 
-# don't bother using this test command
-test:
-	go test -v ./...
+# generic testing
+test: unit integration benchcmp prof
 
 	# Cross compile test binaries
 	# GOOS=linux GOARCH=amd64 go test -c
